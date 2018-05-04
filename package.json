@@ -5,6 +5,7 @@
   "main": "main.js",
   "scripts": {
     "start":"nodemon main.js",
+    "deploy":"gcloud app deploy",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Electrocoders <coderselectro@gmail.com>",
