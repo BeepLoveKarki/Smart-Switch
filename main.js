@@ -12,4 +12,4 @@ app.use(parser.urlencoded({extended:true}));
 app.use(cors());
 
 route.controller(app);
-app.listen(8000);
+app.listen(process.env.PORT || 8080);
