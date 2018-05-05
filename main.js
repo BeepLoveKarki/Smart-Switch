@@ -9,7 +9,7 @@ let app=new express();
 
 app.use(parser.json());
 app.use(parser.urlencoded({extended:true}));
-app.use(cors());
+app.use(cors({origin:'*'}));
 
 route.controller(app);
 app.listen(process.env.PORT || 8080);
