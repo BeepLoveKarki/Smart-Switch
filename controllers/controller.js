@@ -45,7 +45,7 @@ module.exports.controller=function(app) {
        misc.hashit(res,req.body);
     });
       
-    app.post('/wifi',(req,res)=>{
+    app.get('/wifi',(req,res)=>{
       let ssids=new Array();
       let securitys=new Array();
      /*wifi.scan((err,networks)=>{
