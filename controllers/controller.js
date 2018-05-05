@@ -4,6 +4,7 @@ let bcrypt=require('bcryptjs');
 let scheduler=require('node-schedule');
 let mqtt=require('mqtt');
 let request=require('request');
+let wifi=require('node-wifi');
 let client=mqtt.connect("mqtt://broker.hivemq.com");
 let pubtopic="Krishna";
 let subtopic="Biplab";
@@ -22,6 +23,10 @@ client.on("message",(topic,message)=>{
    if(topic==subtopic) {
         m=message.toString();
     }
+});
+
+wifi.init({
+  iface:null
 });
 
 module.exports.controller=function(app) {
@@ -44,19 +49,37 @@ module.exports.controller=function(app) {
     app.post('/addnewuser',(req,res)=>{
        misc.hashit(res,req.body);
     });
+    app.post('/switchandg',(req,res)=>{
+        db.switchandg(res,req.body);
+    });
+
+    /*app.post('/mqtts',(req,res)=>{
+      url="mqtt://"+req.body.values["url"];
+      pubtopic=req.body.values["pubtop"];
+      subtopic=req.body.values["subtop"];
+
+      res.send(JSON.stringify("Done"));
       
+      request.post('/a',{host:req.body.values["url"],pubtop:req.body.values["pubtop"],subtop:req.body.values["subtop"]},(err,response,body)=>{
+        if(err) res.send(JSON.stringify("Error"));
+        res.send(JSON.stringify("Done"));
+      });
+    });*/
+
+    /*app.get('/wifi',(req,res)=>{
+      //wifi list from arduino
+    });*/
     app.get('/wifi',(req,res)=>{
-      let ssids=new Array();
-      let securitys=new Array();
-     /*wifi.scan((err,networks)=>{
-        if(err) res.send(JSON.stringify("Error"))
+     wifi.scan((err,networks)=>{
+        if(err) res.send(JSON.stringify("Error"));
+        let ssids=new Array();
+        let securitys=new Array();
         for(let i=0;i<networks.length;i++){
             ssids.push(networks[i].ssid);
             securitys.push(networks[i].security);
-        }*/
-        ssids=["A","B"];
-        securitys=["Open","Open"];
+        }
         res.send(JSON.stringify({ssids:ssids,securitys:securitys}));
+      });
     });
 
     app.post('/checkifin',(req,res)=>{
@@ -92,10 +115,15 @@ module.exports.controller=function(app) {
 
     app.post('/schedule',(req,res)=>{
         date=new Date(req.body["date"]);
+        /*if(req.body["group"]==undefined){
+           console.log("The type is "+req.body["type"]+" and group name is " +req.body["name"]);
+        }else{
+            console.log("The type is "+req.body["type"]+" ,group name is "+req.body["group"]+" and the switch name is "+req.body["name"]);
+        }*/
         job.push(scheduler.scheduleJob(date,function(){
             client.publish(pubtopic,req.body["name"]);
-            //console.log("The type is "+req.body["type"]+" and switch name is" +req.body["name"]);
         }));
+        res.end(JSON.stringify("Done"));
     });
 
     app.get('/getstat',(req,res)=>{
