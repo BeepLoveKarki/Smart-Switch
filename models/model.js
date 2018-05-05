@@ -1,5 +1,5 @@
 let MongoClient=require('mongodb').MongoClient;
-let url="mongodb://Beeplove:Meriaama12@ds113200.mlab.com:13200/users";
+let url="mongodb://beeplove:Meriaama12@ds113200.mlab.com:13200/users";
 let nodemailer=require('nodemailer');
 let datas;
 
