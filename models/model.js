@@ -1,5 +1,6 @@
 let MongoClient=require('mongodb').MongoClient;
 let url="mongodb://beeplove:Meriaama12@ds113200.mlab.com:13200/users";
+//let url="mongodb://127.0.0.1:27017/";
 let nodemailer=require('nodemailer');
 let datas;
 
@@ -169,6 +170,18 @@ function checkifin(group,switchname,email,res){
   });
 }
 
+function switchandg(res,data){
+    MongoClient.connect(url,(err,db)=>{
+       let dbase=db.db("users");
+       dbase.collection("clients").findOne({email:data["email"]},(err,resu)=>{
+        dbase.collection("clients").update({_id:resu["_id"]},{$set:{group:data["group"],switches:data["switches"]}},(err,results)=>{
+            db.close();
+            if(results.result.nModified!=0) res.send(JSON.stringify("Done"));
+       });
+     });
+  });
+}
+
 
 module.exports={
     insertif:insertif,
@@ -180,5 +193,6 @@ module.exports={
     sendemail:sendemail,
     insertnow:insertnow,
     addgroup:addgroup,
-    checkifin:checkifin
+    checkifin:checkifin,
+    switchandg:switchandg
 }
