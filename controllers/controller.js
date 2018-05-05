@@ -4,7 +4,6 @@ let bcrypt=require('bcryptjs');
 let scheduler=require('node-schedule');
 let mqtt=require('mqtt');
 let request=require('request');
-let wifi=require('node-wifi');
 let client=mqtt.connect("mqtt://broker.hivemq.com");
 let pubtopic="Krishna";
 let subtopic="Biplab";
@@ -49,34 +48,19 @@ module.exports.controller=function(app) {
     app.post('/addnewuser',(req,res)=>{
        misc.hashit(res,req.body);
     });
-
-    /*app.post('/mqtts',(req,res)=>{
-      url="mqtt://"+req.body.values["url"];
-      pubtopic=req.body.values["pubtop"];
-      subtopic=req.body.values["subtop"];
-
-      res.send(JSON.stringify("Done"));
       
-      request.post('/a',{host:req.body.values["url"],pubtop:req.body.values["pubtop"],subtop:req.body.values["subtop"]},(err,response,body)=>{
-        if(err) res.send(JSON.stringify("Error"));
-        res.send(JSON.stringify("Done"));
-      });
-    });*/
-
-    /*app.get('/wifi',(req,res)=>{
-      //wifi list from arduino
-    });*/
-    app.get('/wifi',(req,res)=>{
-     wifi.scan((err,networks)=>{
-        if(err) res.send(JSON.stringify("Error"));
-        let ssids=new Array();
-        let securitys=new Array();
+    app.post('/wifi',(req,res)=>{
+      let ssids=new Array();
+      let securitys=new Array();
+     /*wifi.scan((err,networks)=>{
+        if(err) res.send(JSON.stringify("Error"))
         for(let i=0;i<networks.length;i++){
             ssids.push(networks[i].ssid);
             securitys.push(networks[i].security);
-        }
+        }*/
+        ssids=["A","B"];
+        securitys=["Open","Open"];
         res.send(JSON.stringify({ssids:ssids,securitys:securitys}));
-      });
     });
 
     app.post('/checkifin',(req,res)=>{
