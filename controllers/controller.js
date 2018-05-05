@@ -24,10 +24,6 @@ client.on("message",(topic,message)=>{
     }
 });
 
-wifi.init({
-  iface:null
-});
-
 module.exports.controller=function(app) {
 
    app.get('/',(req,res)=>{
