@@ -48,27 +48,6 @@ module.exports.controller=function(app) {
         db.switchandg(res,req.body);
     });
 
-<<<<<<< HEAD
-
-    /*app.post('/wifi',(req,res)=>{
-      //wifi list from arduino
-    });*/
-    app.get('/wifi',(req,res)=>{
-       let ssids=new Array();
-       let securitys=new Array();
-       ssids=["BWIFI","B"];
-       securitys=["WPA2","Open"];
-     /*wifi.scan((err,networks)=>{
-        if(err) res.send(JSON.stringify("Error"));
-        let ssids=new Array();
-        let securitys=new Array();
-        for(let i=0;i<networks.length;i++){
-            ssids.push(networks[i].ssid);
-            securitys.push(networks[i].security);
-        }*/
-        res.send(JSON.stringify({ssids:ssids,securitys:securitys}));
-      //});
-=======
     /*app.post('/mqtts',(req,res)=>{
       url="mqtt://"+req.body.values["url"];
       pubtopic=req.body.values["pubtop"];
@@ -97,7 +76,6 @@ module.exports.controller=function(app) {
         }
         let name=m.pop();
 		misc.wifimanage(m,name,res);
->>>>>>> 78f05c278c0e888a9a510bcd91292888154093a8
     });
     
 	app.post('/checkifin',(req,res)=>{
