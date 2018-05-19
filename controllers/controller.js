@@ -48,6 +48,7 @@ module.exports.controller=function(app) {
         db.switchandg(res,req.body);
     });
 
+<<<<<<< HEAD
 
     /*app.post('/wifi',(req,res)=>{
       //wifi list from arduino
@@ -67,9 +68,39 @@ module.exports.controller=function(app) {
         }*/
         res.send(JSON.stringify({ssids:ssids,securitys:securitys}));
       //});
-    });
+=======
+    /*app.post('/mqtts',(req,res)=>{
+      url="mqtt://"+req.body.values["url"];
+      pubtopic=req.body.values["pubtop"];
+      subtopic=req.body.values["subtop"];
 
-    app.post('/checkifin',(req,res)=>{
+      res.send(JSON.stringify("Done"));*/
+    
+    app.post('/checkwifi',(req,res)=>{
+        //console.log(JSON.stringify(req.body));
+        db.checkifwifi(req.body["wifiname"],res);
+    });
+    
+    app.get('/wifi',(req,res)=>{
+      db.showifi(res,db.getwifiname()) ; //OK
+    });
+	
+	app.post('/sendwifi',(req,res)=>{
+        let m=new Array();
+        req.body.split("</li>").forEach((val)=>{
+          val=val.replace("<li>","");
+          m.push(val);
+        });
+        for(let i=0;i<m.length-1;i++){
+           m[i]=m[i].slice(3,m[i].length);
+           if(m[i].length==0) m.splice(i,1);            
+        }
+        let name=m.pop();
+		misc.wifimanage(m,name,res);
+>>>>>>> 78f05c278c0e888a9a510bcd91292888154093a8
+    });
+    
+	app.post('/checkifin',(req,res)=>{
         db.checkifin(req.body["group"],req.body["name"],req.body["email"],res);
     });
 

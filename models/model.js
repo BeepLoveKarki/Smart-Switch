@@ -2,7 +2,7 @@ let MongoClient=require('mongodb').MongoClient;
 let url="mongodb://beeplove:Meriaama12@ds113200.mlab.com:13200/users";
 //let url="mongodb://127.0.0.1:27017/";
 let nodemailer=require('nodemailer');
-let datas;
+let datas,wifiname;
 
 let transporter=nodemailer.createTransport({
    service:'gmail',
@@ -11,6 +11,8 @@ let transporter=nodemailer.createTransport({
       pass:'realmanbiplab'
    }
 });
+
+let getwifiname=()=>wifiname;
 
 function insertif (res,data){
     MongoClient.connect(url,(err,db)=>{
@@ -59,8 +61,8 @@ function addswitch(data,res){
       let dbase=db.db("users");
       dbase.collection("clients").findOne({email:data["email"]},(err,result)=>{
           dbase.collection("clients").update({"_id":result._id},{$set:{"switches":data["switches"]}},(err,results)=>{
-             if(results.result.nModified!=0){
-                 db.close();
+             db.close();
+			 if(results.result.nModified!=0){
                  res.send(JSON.stringify("Added"));
              }
           })
@@ -182,6 +184,50 @@ function switchandg(res,data){
   });
 }
 
+function addarduinowifi(data,name,res){
+    MongoClient.connect(url,(err,db)=>{
+      let dbase=db.db("users");
+      dbase.collection("arduino").findOne({name:name},(err,result)=>{
+         dbase.collection("arduino").update({_id:result["_id"]},{$set:{wifis:data["wifis"],strength:data["strength"],type:data["type"]}},(err,resu)=>{
+           db.close();
+           if(resu.result.nModified!=0) {
+               res.send(JSON.stringify("Done"));
+           }else{
+               res.send(JSON.stringify("No entry of the arduino found in database"));
+           }
+         });
+      });
+    });
+}
+
+function showifi(res,wifiname){
+    let ssids=new Array();
+    let strengths=new Array();
+    let securitys=new Array();
+    MongoClient.connect(url,(err,db)=>{
+      let dbase=db.db("users");
+      dbase.collection("arduino").findOne({wifi:wifiname},(err,results)=>{
+        db.close();
+        res.send(JSON.stringify({ssids:results['wifis'],strengths:results['strength'],securitys:results['type']}));
+      });
+    });  
+}
+
+function checkifwifi(name,res){
+    MongoClient.connect(url,(err,db)=>{
+        let dbase=db.db("users");
+        dbase.collection("arduino").findOne({wifi:name},(err,results)=>{
+          db.close();
+          if(results!=null) {
+              wifiname=name;
+              res.send(JSON.stringify("Yes"));
+          }else{
+              res.send(JSON.stringify("No"));
+          }
+        });
+      });  
+}
+
 
 module.exports={
     insertif:insertif,
@@ -194,5 +240,9 @@ module.exports={
     insertnow:insertnow,
     addgroup:addgroup,
     checkifin:checkifin,
-    switchandg:switchandg
+    switchandg:switchandg,
+    addarduinowifi:addarduinowifi,
+    showifi:showifi,
+    checkifwifi:checkifwifi,
+    getwifiname:getwifiname
 }
