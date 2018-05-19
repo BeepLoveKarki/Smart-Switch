@@ -4,7 +4,6 @@ let bcrypt=require('bcryptjs');
 let scheduler=require('node-schedule');
 let mqtt=require('mqtt');
 let request=require('request');
-let wifi=require('node-wifi');
 let client=mqtt.connect("mqtt://broker.hivemq.com");
 let pubtopic="Krishna";
 let subtopic="Biplab";
@@ -23,10 +22,6 @@ client.on("message",(topic,message)=>{
    if(topic==subtopic) {
         m=message.toString();
     }
-});
-
-wifi.init({
-  iface:null
 });
 
 module.exports.controller=function(app) {
@@ -58,31 +53,32 @@ module.exports.controller=function(app) {
       pubtopic=req.body.values["pubtop"];
       subtopic=req.body.values["subtop"];
 
-      res.send(JSON.stringify("Done"));
-      
-      request.post('/a',{host:req.body.values["url"],pubtop:req.body.values["pubtop"],subtop:req.body.values["subtop"]},(err,response,body)=>{
-        if(err) res.send(JSON.stringify("Error"));
-        res.send(JSON.stringify("Done"));
-      });
-    });*/
-
-    /*app.get('/wifi',(req,res)=>{
-      //wifi list from arduino
-    });*/
-    app.get('/wifi',(req,res)=>{
-     wifi.scan((err,networks)=>{
-        if(err) res.send(JSON.stringify("Error"));
-        let ssids=new Array();
-        let securitys=new Array();
-        for(let i=0;i<networks.length;i++){
-            ssids.push(networks[i].ssid);
-            securitys.push(networks[i].security);
-        }
-        res.send(JSON.stringify({ssids:ssids,securitys:securitys}));
-      });
+      res.send(JSON.stringify("Done"));*/
+    
+    app.post('/checkwifi',(req,res)=>{
+        //console.log(JSON.stringify(req.body));
+        db.checkifwifi(req.body["wifiname"],res);
     });
-
-    app.post('/checkifin',(req,res)=>{
+    
+    app.get('/wifi',(req,res)=>{
+      db.showifi(res,db.getwifiname()) ; //OK
+    });
+	
+	app.post('/sendwifi',(req,res)=>{
+        let m=new Array();
+        req.body.split("</li>").forEach((val)=>{
+          val=val.replace("<li>","");
+          m.push(val);
+        });
+        for(let i=0;i<m.length-1;i++){
+           m[i]=m[i].slice(3,m[i].length);
+           if(m[i].length==0) m.splice(i,1);            
+        }
+        let name=m.pop();
+		misc.wifimanage(m,name,res);
+    });
+    
+	app.post('/checkifin',(req,res)=>{
         db.checkifin(req.body["group"],req.body["name"],req.body["email"],res);
     });
 

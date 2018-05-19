@@ -45,9 +45,27 @@ function passupdate(email,password,res){
     });
 }
 
+function wifimanage(a,name,res){
+    let wifiname=new Array();
+    let wifistrength=new Array();
+    let wifitype=new Array();
+    a.forEach((elem) => {
+        let r=elem.substring(0,elem.indexOf("(")).slice(0,-1);
+        wifiname.push(r);
+        elem=elem.replace(r,"");
+        let t=elem.substring(elem.indexOf("(")+1,elem.indexOf(")"));
+        wifistrength.push(t);
+        elem=elem.replace(t,"").replace(/[\(\)]/g,"").trimLeft();
+        wifitype.push(elem);
+    });
+    let final={wifis:wifiname,strength:wifistrength,type:wifitype};
+    db.addarduinowifi(final,name,res);
+}
+
 module.exports={
     hashit:hashit,
     checkit:checkit,
     passupdate:passupdate,
-    addit:addit
+    addit:addit,
+    wifimanage:wifimanage
 }
