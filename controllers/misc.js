@@ -34,7 +34,7 @@ function checkpass(p1,p2,req,res){
          }else{
             res.send(JSON.stringify("No"));
          }
-    });
+    }) ;
 }
 
 function passupdate(email,password,res){
